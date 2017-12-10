@@ -4,7 +4,7 @@ from garage_door_control import flip_switch
 
 # Mappings of URL to class
 urls = (
-    '/', 'Main',
+    '/', 'Main'
 )
 
 app = web.application(urls, globals())
@@ -17,8 +17,8 @@ class Main(object):
         return render.switch_panel()
 
     def POST(self):
-        form = web.input(switch1)
-        # flip_switch.flip()
+        form = web.input()
+        flip_switch.flip()
         print('switch flipped')
 
 
