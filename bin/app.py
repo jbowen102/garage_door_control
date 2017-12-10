@@ -17,6 +17,7 @@ class Main(object):
 
     def POST(self):
         form = web.input(switch1)
+        # flip_switch.flip()
         print('switch flipped')
 
 
