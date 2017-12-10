@@ -1,5 +1,6 @@
 import web
-from .garage_door_control import flip_switch
+from garage_door_control import flip_switch
+
 
 # Mappings of URL to class
 urls = (
