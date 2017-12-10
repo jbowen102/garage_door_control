@@ -20,6 +20,7 @@ class Main(object):
         form = web.input()
         flip_switch.flip()
         print('switch flipped')
+	return render.switch_panel()
 
 
 if __name__ == "__main__":
