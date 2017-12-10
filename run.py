@@ -1,15 +1,19 @@
+from time import sleep
 import RPi.GPIO as GPIO
+
+
+GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(17, GPIO.OUT)
 
 while True:
     switch_pos = input("Type 'on' to switch relay:\n> ")
     if switch_pos == 'on':
-        GPIO.output(17, HIGH)
-    # usleep(0.2)
-        for x in range(1000):
-            pass
-    GPIO.output(17, LOW)
+        GPIO.output(17, 1)
+    sleep(0.2)
+    #    for x in range(1000):
+    #        pass
+    GPIO.output(17, 0)
 
 GPIO.cleanup()
 
