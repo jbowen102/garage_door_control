@@ -23,6 +23,11 @@ h2 {
 button {
     background-color: #FF530D;
     font-weight: bold;
+    -moz-border-radius: 30px;
+    -webkit-border-radius: 30px;
+    border-radius: 30px;
+    height: 400px;
+    width: 700px;
 }
 
 input {
