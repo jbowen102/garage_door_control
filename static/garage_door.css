@@ -30,6 +30,17 @@ button {
     width: 700px;
 }
 
+.small-button button {
+    background-color: #FF530D;
+    font-weight: bold;
+    -moz-border-radius: 30px;
+    -webkit-border-radius: 30px;
+    border-radius: 30px;
+    height: 200px;
+    width: 350px;
+}
+
+
 input {
     text-align: left;
 }
