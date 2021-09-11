@@ -1,5 +1,5 @@
 import web
-from garage_door_control import flip_switch
+import flip_switch
 
 
 # Mappings of URL to class

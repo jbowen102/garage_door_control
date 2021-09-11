@@ -8,9 +8,9 @@ config = {
     'author': 'Jonathan Bowen',
     'url': 'https://github.com/jbowen102/garage_door_control',
     'download_url': 'https://github.com/jbowen102/garage_door_control',
-    'author_email': 'jjbowen19@gmail.com',
+    'author_email': 'ew15dro6k216@opayq.net',
     'version': '0.1',
-    'install_requires': ['nose', 'wiringpi2'],
+    'install_requires': ['web', 'wiringpi2'],
     'packages': [],
     'scripts': [],
     'name': 'garage_door_control'
