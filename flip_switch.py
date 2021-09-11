@@ -1,4 +1,4 @@
-from time import sleep
+import time
 import RPi.GPIO as GPIO
 
 
@@ -8,7 +8,7 @@ def flip():
     GPIO.setup(17, GPIO.OUT)
 
     GPIO.output(17, 1)
-    sleep(0.2)
+    time.sleep(0.2)
     GPIO.output(17, 0)
 
     GPIO.cleanup()

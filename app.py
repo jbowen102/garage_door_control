@@ -1,4 +1,5 @@
 import os
+import time
 from datetime import datetime
 import web
 
@@ -33,14 +34,14 @@ class Main(object):
     def log_action(self, operation="flip"):
         """Record activity in log file."""
         timestamp = datetime.now().strftime("%Y-%m-%dT%H%M%S")
-        filename = "%s_%s.log" % (timestamp, operation.lower())
 
         # Wait one second to prevent overwriting previous file if it occurred
         # less than one second ago.
         time.sleep(1)
-        full_path = os.path.join(LOG_DIR, filename)
-        with open(full_path, "w") as log_file:
-            log_file.write("Switch operation: %s [%s]" % (operation, timestamp))
+        log_filename = "activity.log"
+        full_path = os.path.join(LOG_DIR, log_filename)
+        with open(full_path, "a") as log_file:
+            log_file.write("[%s] Switch operation: %s\n" % (timestamp, operation))
 
 
 if __name__ == "__main__":
