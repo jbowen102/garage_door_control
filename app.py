@@ -3,16 +3,30 @@ import time
 from datetime import datetime
 import web
 
-import flip_switch
+import flip_door_switch, flip_light_switch
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_DIR = os.path.join(SCRIPT_DIR, "logs")
 
 
+def log_action(operation):
+    """Record activity in log file."""
+    timestamp = datetime.now().strftime("%Y-%m-%dT%H%M%S")
+
+    # Wait one second to prevent overwriting previous file if it occurred
+    # less than one second ago.
+    time.sleep(1)
+    log_filename = "activity.log"
+    full_path = os.path.join(LOG_DIR, log_filename)
+    with open(full_path, "a") as log_file:
+        log_file.write("[%s] Garage-door operation: %s\n" % (timestamp, operation))
+
+
 # Mappings of URL to class
 urls = (
-    '/', 'Main'
+    '/', 'Main',
+    '/light', 'Light'
 )
 
 app = web.application(urls, globals())
@@ -22,26 +36,27 @@ render = web.template.render('templates/')
 
 class Main(object):
     def GET(self):
-        return render.switch_panel()
+        return render.door_switch_panel()
 
     def POST(self):
         form = web.input()
-        flip_switch.flip()
+        flip_door_switch.flip()
         # print('switch flipped')
-        self.log_action()
-        return render.switch_panel()
+        log_action("door switch actuated")
+        return render.door_switch_panel()
 
-    def log_action(self, operation="flip"):
-        """Record activity in log file."""
-        timestamp = datetime.now().strftime("%Y-%m-%dT%H%M%S")
 
-        # Wait one second to prevent overwriting previous file if it occurred
-        # less than one second ago.
-        time.sleep(1)
-        log_filename = "activity.log"
-        full_path = os.path.join(LOG_DIR, log_filename)
-        with open(full_path, "a") as log_file:
-            log_file.write("[%s] Switch operation: %s\n" % (timestamp, operation))
+class Light(object):
+    def GET(self):
+        return render.light_switch_panel()
+
+    def POST(self):
+        form = web.input()
+        flip_light_switch.flip()
+        # print('switch flipped')
+        log_action("light switch flipped")
+        return render.light_switch_panel()
+
 
 
 if __name__ == "__main__":
