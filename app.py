@@ -26,7 +26,7 @@ def log_action(operation):
 
 # Create objects to represent two controller switches
 DoorSwitch = Switch(17) # Uses GPIO17
-LightSwitch = Switch(27) # Uses GPIO17
+LightSwitch = Switch(27) # Uses GPIO27
 
 # Mappings of URL to class
 urls = (

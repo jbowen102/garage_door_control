@@ -1,5 +1,7 @@
 import time
 import os
+import signal
+
 import RPi.GPIO as GPIO
 
 
@@ -25,18 +27,25 @@ class Switch(object):
 
         # If light is already on, turn off and terminate existing countdown.
         if self.timer_on:
+            # print("%d: TIMER on already" % os.getpid())
             os.kill(self.pid, signal.SIGINT)
             self.timer_on = False
+            # print("%d: TIMER turned off" % os.getpid())
             GPIO.output(self.gpio_num, 0)
+            # print("%d: LIGHT turned off" % os.getpid())
 
         else:
             GPIO.output(self.gpio_num, 1)
+            # print("%d: LIGHT turned on" % os.getpid())
 
             self.pid = os.fork()
             if self.pid: # parent process
                 self.timer_on = True
+                # print("%d: TIMER turned on" % os.getpid())
             else: # child process
                 # turn light off after timeout
                 time.sleep(timeout)
                 GPIO.output(self.gpio_num, 0)
+                # print("%d: LIGHT turned off" % os.getpid())
                 self.timer_on = False
+                # print("%d: TIMER turned off" % os.getpid())
