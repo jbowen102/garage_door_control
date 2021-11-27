@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 import web
 
-import flip_door_switch, flip_light_switch
+from switch import Switch
 
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -20,8 +20,13 @@ def log_action(operation):
     log_filename = "activity.log"
     full_path = os.path.join(LOG_DIR, log_filename)
     with open(full_path, "a") as log_file:
-        log_file.write("[%s] Garage-door operation: %s\n" % (timestamp, operation))
+        log_file.write("[%s] Garage-door operation: %s\n" %
+                                                        (timestamp, operation))
 
+
+# Create objects to represent two controller switches
+DoorSwitch = Switch(17) # Uses GPIO17
+LightSwitch = Switch(27) # Uses GPIO17
 
 # Mappings of URL to class
 urls = (
@@ -40,7 +45,7 @@ class Main(object):
 
     def POST(self):
         form = web.input()
-        flip_door_switch.flip()
+        DoorSwitch.short_flip()
         # print('switch flipped')
         log_action("door switch actuated")
         return render.door_switch_panel()
@@ -52,7 +57,7 @@ class Light(object):
 
     def POST(self):
         form = web.input()
-        flip_light_switch.flip()
+        LightSwitch.timed_flip(30)
         # print('switch flipped')
         log_action("light switch flipped")
         return render.light_switch_panel()
