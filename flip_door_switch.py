@@ -11,7 +11,7 @@ def flip():
     time.sleep(0.2)
     GPIO.output(17, 0)
 
-    GPIO.cleanup()
+    # GPIO.cleanup()
 
 
 
