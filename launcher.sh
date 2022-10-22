@@ -4,7 +4,7 @@
 
 cd /
 cd home/user01/garage_door_control
-sudo python app.py
+sudo python3 app.py
 cd /
 
 
