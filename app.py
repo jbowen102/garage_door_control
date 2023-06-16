@@ -57,7 +57,8 @@ class Light(object):
 
     def POST(self):
         form = web.input()
-        LightSwitch.timed_flip(30*60)
+        # LightSwitch.timed_flip(30*60)
+        LightSwitch.timed_flip(120*60)
         # print('switch flipped')
         log_action("light switch flipped")
         return render.light_switch_panel()
