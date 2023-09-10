@@ -2,10 +2,10 @@
 # launcher.#!/bin/sh
 # navigate to root directory, then to this directory, then execute python script, then back to root
 
-cd /
-cd home/user01/garage_door_control
-sudo python app.py
-cd /
+cd /home/user01/garage_door_control
+#sudo python app.py
+python app.py
+cd -
 
 
 # added this to root crontab (using command 'sudo crontab -e':
