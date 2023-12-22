@@ -19,6 +19,7 @@ class Switch(object):
         time.sleep(0.2)
         GPIO.output(self.gpio_num, 0)
 
+
     def timed_flip(self, timeout):
         """Turns a switch on for set amount of time or turns switch off.
         Timeout measured in seconds
@@ -33,28 +34,28 @@ class Switch(object):
 
         # If light is already on, turn off and terminate existing countdown.
         if self.time_on:
-            # print("%d: TIMER on already" % os.getpid())
+            # print("%d: TIMER on already" % os.getpid()) # DEBUG
             os.kill(self.pid, signal.SIGINT)
             self.time_on = False
-            # print("%d: TIMER turned off" % os.getpid())
+            # print("%d: TIMER turned off" % os.getpid()) # DEBUG
             GPIO.output(self.gpio_num, 0)
-            # print("%d: LIGHT turned off" % os.getpid())
+            # print("%d: LIGHT turned off" % os.getpid()) # DEBUG
 
         else:
             GPIO.output(self.gpio_num, 1)
-            # print("%d: LIGHT turned on" % os.getpid())
+            # print("%d: LIGHT turned on" % os.getpid()) # DEBUG
 
             self.pid = os.fork()
             if self.pid: # parent process
                 self.time_on = dt.datetime.now()
-                # print("%d: TIMER turned on" % os.getpid())
+                # print("%d: TIMER turned on" % os.getpid()) # DEBUG
             else: # child process
                 # turn light off after timeout
                 time.sleep(timeout)
                 GPIO.output(self.gpio_num, 0)
-                # print("%d: LIGHT turned off" % os.getpid())
+                # print("%d: LIGHT turned off" % os.getpid()) # DEBUG
                 self.time_on = False # doesn't work
-                # print("%d: TIMER turned off" % os.getpid())
+                # print("%d: TIMER turned off" % os.getpid()) # DEBUG
 
     def on_time_elapsed(self):
         """Evaluates time elapsed since timed_flip() turned on.

@@ -3,6 +3,8 @@ import time
 from datetime import datetime
 import web
 
+import RPi.GPIO as GPIO
+
 from switch import Switch
 
 
@@ -30,6 +32,11 @@ LightSwitch = Switch(27) # Uses GPIO27
 # Mappings of URL to class
 urls = (
     '/', 'Main',
+    '/SC', 'DoorSC',
+    '/SC-Badge', 'DoorSCBadge',
+    '/SC-Windshield', 'DoorSCWindshield',
+    '/SC-RackTag', 'DoorSCRackTag',
+    '/SC-BikeTag', 'DoorSCBikeTag',
     '/light', 'Light',
     '/light-shortcut', 'LightSC'
 )
@@ -50,6 +57,29 @@ class Main(object):
         log_action("Garage-door switch actuated", self)
         return render.door_switch_panel()
 
+    def __repr__(self):
+        return "Webpage Door Switch"
+
+class DoorSC(Main):
+    def __repr__(self):
+        return "Door Switch iOS Shortcut"
+
+class DoorSCBadge(Main):
+    def __repr__(self):
+        return "Door Switch iOS Shortcut via Badge NFC Scan"
+
+class DoorSCWindshield(Main):
+    def __repr__(self):
+        return "Door Switch iOS Shortcut via Biking Windshield Hangtag NFC Scan"
+
+class DoorSCRackTag(Main):
+    def __repr__(self):
+        return "Door Switch iOS Shortcut via IS300 Roof Rack AirTag Scan"
+
+class DoorSCBikeTag(Main):
+    def __repr__(self):
+        return "Door Switch iOS Shortcut via Bike AirTag Scan"
+
 
 class Light(object):
     def GET(self):
@@ -67,7 +97,6 @@ class Light(object):
     def __repr__(self):
         return "Light Switch Webpage"
 
-
 class LightSC(Light):
     def __repr__(self):
         return "Light Switch iOS Shortcut"
@@ -76,3 +105,4 @@ class LightSC(Light):
 
 if __name__ == "__main__":
     app.run()
+    GPIO.cleanup()
