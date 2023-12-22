@@ -20,8 +20,13 @@ def log_action(operation, Source):
     # less than one second ago.
     time.sleep(1)
     log_filename = "activity.log"
-    full_path = os.path.join(LOG_DIR, log_filename)
-    with open(full_path, "a") as log_file:
+    log_path = os.path.join(LOG_DIR, log_filename)
+    # Create log file if it doesn't exist already.
+    if not os.path.exists(log_path):
+        with open(log_path, "w") as fd:
+            pass
+
+    with open(log_path, "a") as log_file:
         log_file.write("[%s] %s by %s.\n" % (timestamp, operation, Source))
 
 
