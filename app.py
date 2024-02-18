@@ -30,9 +30,27 @@ def log_action(operation, Source):
         log_file.write("[%s] %s by %s.\n" % (timestamp, operation, Source))
 
 
-# Create objects to represent two controller switches
-DoorSwitch = Switch(17) # Uses GPIO17
-LightSwitch = Switch(27) # Uses GPIO27
+class Controller(object):
+    def __init__(self):
+        # Create objects to represent the controller's two switches
+        self.DoorSwitch = Switch(17) # Uses GPIO17
+        self.LightSwitch = Switch(27) # Uses GPIO27
+
+        self.bike_lockout_active = False
+
+    def is_bike_lockout_active(self):
+        return self.bike_lockout_active
+
+    def enter_bike_lockout(self):
+        # Put controller in "bike lockout" state that requires getting out of
+        # car before opening door again.
+        self.bike_lockout_active = True
+
+    def exit_bike_lockout(self):
+        self.bike_lockout_active = False
+
+
+GarageController = Controller()
 
 # Mappings of URL to class
 urls = (
@@ -55,11 +73,30 @@ class Main(object):
     def GET(self):
         return render.door_switch_panel()
 
-    def POST(self):
+    def POST(self, lock=False, unlock=False):
         form = web.input()
-        DoorSwitch.short_flip()
 
-        log_action("Garage-door switch actuated", self)
+        if unlock:
+            if GarageController.is_bike_lockout_active():
+                GarageController.exit_bike_lockout()
+                log_action("Garage-door bike lockout deactivated", self)
+            else:
+                log_action("Garage-door bike lockout inactive already. Redundant deactivation", self)
+
+        if GarageController.is_bike_lockout_active():
+            log_action("Garage-door switch actuation FAILED ATTEMPT "
+                                                  "(bike lockout active)", self)
+        else:
+            GarageController.DoorSwitch.short_flip()
+            log_action("Garage-door switch actuated", self)
+
+        if lock:
+            if GarageController.is_bike_lockout_active():
+                log_action("Garage-door bike lockout active already. Redundant activation", self)
+            else:
+                GarageController.enter_bike_lockout()
+                log_action("Garage-door bike lockout activated", self)
+
         return render.door_switch_panel()
 
     def __repr__(self):
@@ -74,14 +111,23 @@ class DoorSCBadge(Main):
         return "Door Switch iOS Shortcut via Badge NFC Scan"
 
 class DoorSCWindshield(Main):
+    def POST(self):
+        return super(DoorSCWindshield, self).POST(lock=True)
+
     def __repr__(self):
         return "Door Switch iOS Shortcut via Biking Windshield Hangtag NFC Scan"
 
 class DoorSCRackTag(Main):
+    def POST(self):
+        return super(DoorSCRackTag, self).POST(unlock=True)
+
     def __repr__(self):
         return "Door Switch iOS Shortcut via IS300 Roof Rack AirTag Scan"
 
 class DoorSCBikeTag(Main):
+    def POST(self):
+        return super(DoorSCBikeTag, self).POST(unlock=True)
+
     def __repr__(self):
         return "Door Switch iOS Shortcut via Bike AirTag Scan"
 
@@ -94,7 +140,7 @@ class Light(object):
         form = web.input()
 
         minutes = 120
-        LightSwitch.timed_flip(minutes*60)
+        GarageController.LightSwitch.timed_flip(minutes*60)
 
         log_action("Light switch flipped", self)
         return render.light_switch_panel()
