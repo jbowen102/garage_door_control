@@ -10,7 +10,7 @@ from switch import Switch
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 LOG_DIR = os.path.join(SCRIPT_DIR, "logs")
-
+BIKE_LOCK_INDICATOR_PATH = os.path.join(SCRIPT_DIR, "bike_lockout_indicator")
 
 def log_action(operation, Source):
     """Record activity in log file."""
@@ -36,7 +36,10 @@ class Controller(object):
         self.DoorSwitch = Switch(17) # Uses GPIO17
         self.LightSwitch = Switch(27) # Uses GPIO27
 
-        self.bike_lockout_active = False
+        if os.path.isfile(BIKE_LOCK_INDICATOR_PATH):
+            self.bike_lockout_active = True
+        else:
+            self.bike_lockout_active = False
 
     def is_bike_lockout_active(self):
         return self.bike_lockout_active
@@ -44,9 +47,19 @@ class Controller(object):
     def enter_bike_lockout(self):
         # Put controller in "bike lockout" state that requires getting out of
         # car before opening door again.
+        assert not os.path.exists(BIKE_LOCK_INDICATOR_PATH),\
+                       "Tried to enter bike lockout when already in that state."
+        open(BIKE_LOCK_INDICATOR_PATH, "access_mode")
+        assert os.path.isfile(BIKE_LOCK_INDICATOR_PATH), "Should have created \
+                                             bike-lock file, but can't find it."
         self.bike_lockout_active = True
 
     def exit_bike_lockout(self):
+        assert os.path.isfile(BIKE_LOCK_INDICATOR_PATH), "Tried to exit bike \
+                                                lockout when not in that state."
+        os.remove(BIKE_LOCK_INDICATOR_PATH)
+        assert not os.path.isfile(BIKE_LOCK_INDICATOR_PATH), "Should have \
+                                       deleted bike-lock file, but still there."
         self.bike_lockout_active = False
 
 
