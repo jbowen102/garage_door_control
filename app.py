@@ -89,6 +89,11 @@ class Main(object):
     def POST(self, lock=False, unlock=False):
         form = web.input()
 
+        self.actuate_door_switch(lock, unlock)
+
+        return render.door_switch_panel()
+
+    def actuate_door_switch(self, lock=False, unlock=False):
         if unlock:
             if GarageController.is_bike_lockout_active():
                 GarageController.exit_bike_lockout()
@@ -109,8 +114,6 @@ class Main(object):
             else:
                 GarageController.enter_bike_lockout()
                 log_action("Garage-door bike lockout activated", self)
-
-        return render.door_switch_panel()
 
     def __repr__(self):
         return "Webpage Door Switch"
@@ -143,6 +146,25 @@ class DoorSCBikeTag(Main):
 
     def __repr__(self):
         return "Door Switch iOS Shortcut via Bike AirTag Scan"
+
+
+class DoorTerminalAccess(Main):
+    """Access method for abstracting door command using terminal (usually SSH)
+    """
+    def __init__(self, custom_name=None):
+        self.name = custom_name
+
+    def GET(self):
+        return
+
+    def POST(self, lock=False, unlock=False):
+        return
+
+    def __repr__(self):
+        if self.name is None:
+            return "DoorTerminalAccess"
+        else:
+            return "DoorTerminalAccess - %s" % self.name
 
 
 class Light(object):
