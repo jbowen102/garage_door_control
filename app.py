@@ -86,10 +86,11 @@ class Main(object):
     def GET(self):
         return render.door_switch_panel()
 
-    def POST(self, lock=False, unlock=False):
+    def POST(self, door_actuate=True, lock=False, unlock=False):
         form = web.input()
 
-        self.actuate_door_switch(lock, unlock)
+        if door_actuate:
+            self.actuate_door_switch(lock, unlock)
 
         return render.door_switch_panel()
 
@@ -135,7 +136,7 @@ class DoorSCWindshield(Main):
 
 class DoorSCRackTag(Main):
     def POST(self):
-        return super(DoorSCRackTag, self).POST(unlock=True)
+        return super(DoorSCRackTag, self).POST(door_actuate=False, lock=True)
 
     def __repr__(self):
         return "Door Switch iOS Shortcut via IS300 Roof Rack AirTag Scan"
